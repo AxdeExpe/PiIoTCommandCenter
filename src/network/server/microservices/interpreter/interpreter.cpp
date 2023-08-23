@@ -17,14 +17,40 @@ Interpreter::Interpreter(char* dataPacket){
 
 int Interpreter::InterpretData(){
     if(!this->dataPacket){
-        return -1;
+        return -1; //data packet is empty
     }
 
     //check the data packet
     //request
     if(this->dataPacket[0] == 0x00){
 
-    }
+        //check the response
+        if(this->dataPacket[1] == 0x00){
+            //ignoring the response because everything is fine
+            if(this->dataPacket[2] == 0x00){
+                
+            }
+            else if(this->dataPacket[2] == 0x01){
+
+            }
+            else if(this->dataPacket[2] == 0x02){
+
+            }
+            else if(this->dataPacket[2] == 0x03){
+
+            }
+            else{
+                return -1; //unable to interpret the data packet
+
+            }
+        }
+        else if(this->dataPacket[1] == 0x01){
+
+        }
+        else{
+            return -1; //unable to interpret the data packet
+        }
+
 
     //response
     if(this->dataPacket[0] == 0x01){
