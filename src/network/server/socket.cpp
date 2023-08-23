@@ -1,5 +1,5 @@
 #include "socket.h"
-
+#include "microservices/interpreter/interpreter.cpp"
 
 Socket::Socket(int port){
     
@@ -56,7 +56,12 @@ bool Socket::createSocket(){
         receive();
 
         //interpret data and do something with it
-        interpretData();
+        Interpreter *interpreter = new Interpreter(this->DataPaketReceive);
+        interpreter->InterpretData();
+
+        delete this->DataPaketReceive;
+        delete interpreter;
+
 
         //send response
 
@@ -106,77 +111,6 @@ bool Socket::send(char *data){
 
 
 
-/*
-    Datastructure in the DataPaketReceive
-
-    1. Byte: 0x00 = Request, 0x01 = Response
-    2. Byte: 0x00 = Success, 0x01 = Failure -> response from the previous data packet
-    3. Byte: 0x00 = Login, 0x01 = Logout, 0x02 = Get Data, 0x03 = Set Data
-    4. Byte: 0x00 = No Data, 0x01 = Commands, 0x02 = File
-    5 - n. Byte: Data
-*/
-bool Socket::interpretData(){
-
-    //request
-    if(this->DataPaketReceive[0] == 0x00){
-
-    }
-
-    //response
-    if(this->DataPaketReceive[0] == 0x01){
-
-    }
-
-    //success
-    if(this->DataPaketReceive[1] == 0x00){
-
-
-    }
-
-    //failure
-    if(this->DataPaketReceive[1] == 0x01){
-
-    }
-
-    //Login
-    if(this->DataPaketReceive[2] == 0x00){
-
-    }
-
-    //Logout
-    if(this->DataPaketReceive[2] == 0x01){
-
-    }
-
-    //Get Data
-    if(this->DataPaketReceive[2] == 0x02){
-
-    }
-
-    //Set Data
-    if(this->DataPaketReceive[2] == 0x03){
-
-    }
-
-    //No Data
-    if(this->DataPaketReceive[3] == 0x00){
-
-    }
-
-    //Commands
-    if(this->DataPaketReceive[3] == 0x01){
-
-    }
-
-    //File
-    if(this->DataPaketReceive[3] == 0x02){
-
-    }
-
-    delete this->DataPaketReceive;
-
-    return true;
-}
 
 
 Socket::~Socket(){

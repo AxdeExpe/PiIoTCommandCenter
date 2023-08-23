@@ -16,7 +16,6 @@ class Socket{
 
         void receive();
         bool send(char *data);
-        bool interpretData();
 
         ~Socket();
 
