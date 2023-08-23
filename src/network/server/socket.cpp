@@ -1,5 +1,5 @@
 #include "socket.h"
-#include "microservices/interpreter/interpreter.cpp"
+#include "../../microservices/interpreter/interpreter.cpp"
 
 Socket::Socket(int port){
     
@@ -42,8 +42,11 @@ bool Socket::createSocket(){
             cout << "Error accepting client connection." << endl;
             return false;
         }
+
+        char clientIP[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &(address.sin_addr), clientIP, INET_ADDRSTRLEN);
         
-        cout << "New client connected" << endl;
+        cout << "New client connected! IP: " << clientIP << endl;
 
         if (this->new_socket == -1) {
             cout << "Error accepting client connection." << endl;
@@ -56,7 +59,7 @@ bool Socket::createSocket(){
         receive();
 
         //interpret data and do something with it
-        Interpreter *interpreter = new Interpreter(this->DataPaketReceive);
+        Interpreter *interpreter = new Interpreter(this->DataPaketReceive, clientIP);
         interpreter->InterpretData();
 
         delete this->DataPaketReceive;
@@ -99,8 +102,6 @@ void Socket::receive(){
     // Null-terminate the received data
     if (this->DataPaketReceive) {
         this->DataPaketReceive[bufferSize] = '\0';
-        cout << this->DataPaketReceive << endl;
-        //delete[] this->DataPaketReceive;
     }
 }
 
@@ -115,7 +116,6 @@ bool Socket::send(char *data){
 
 Socket::~Socket(){
     if(this->DataPaketSend){
-        cout << "gelöscht 2" << endl;
         delete[] this->DataPaketSend;
     }
     

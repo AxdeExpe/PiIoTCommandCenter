@@ -13,12 +13,9 @@ int main(){
         return 1;
     }
 
-for(int i = 0; i < 5; i++) {
-        string s = "Hello from clien122222222222lskjdjkarekjbgfkhljiuadsgfb4qi79z132qgziahkldfhbaksndbfhkasdfbhashkbdfakhljdhkfuh2ih3rqhfkahjds222222222222222222t\n";
+        string s = "0000admin";
         socket->setDataPaketSend(s.c_str());
         bool sent = socket->sendData();
-
-}
     
 
     delete socket;

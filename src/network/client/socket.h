@@ -18,6 +18,7 @@ class Socket{
         bool sendData();
 
         void setDataPaketSend(string data){
+
             if (this->DataPaketSend) {
                 delete[] this->DataPaketSend;
             }

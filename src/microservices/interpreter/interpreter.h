@@ -11,15 +11,17 @@ class Interpreter{
 
     public:
 
-        Interpreter(char* dataPacket);
+        Interpreter(char* dataPacket, char* clientIP);
 
         int InterpretData();
 
         ~Interpreter();
 
     private:
+        int checkRights();
 
         char* dataPacket;
+        char* clientIP;
         vector<string> logins;
 
 };
