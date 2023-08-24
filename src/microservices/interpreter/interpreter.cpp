@@ -28,6 +28,15 @@ Interpreter::Interpreter(char* dataPacket, char* clientIP){
     5 - n. Bytes: pwd
 */
 
+/*
+    ret val:
+    -1: unable to interpret the data packet
+    -2: unable to open the json file
+    -3: client is already connected
+    -4: login failed
+    -5:
+*/
+
 int Interpreter::InterpretData(){
     if(!this->dataPacket){
         return -1; //data packet is empty
@@ -46,6 +55,17 @@ int Interpreter::InterpretData(){
             if(this->dataPacket[2] == '0'){
                 //for login only
                 if(this->dataPacket[3] == '0'){
+
+                    //check if the client is already connected
+                    for(int i = 0; i < IPs.size(); i++){
+                        if(this->IPs[i] == this->clientIP){
+                            cout << "Client is already connected! IP: " << this->clientIP << endl;
+                            return -3;
+                        }
+                    }
+
+                    //add the client to the list if he is not already connected
+                    IPs.push_back(this->clientIP);
 
                     ifstream data("../../microservices/data.json", ifstream::binary);
 
@@ -78,6 +98,9 @@ int Interpreter::InterpretData(){
                             }
                         }
                     }
+
+                    //send response that the login failed
+                    this->IPs.pop_back();
 
                     cout << "Login failed" << endl;
                     return -1;
@@ -163,4 +186,5 @@ int Interpreter::InterpretData(){
 
 Interpreter::~Interpreter(){
     delete[] this->dataPacket;
+    delete[] this->clientIP;
 }

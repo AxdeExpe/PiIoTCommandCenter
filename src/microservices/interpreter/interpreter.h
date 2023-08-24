@@ -22,6 +22,6 @@ class Interpreter{
 
         char* dataPacket;
         char* clientIP;
-        vector<string> logins;
+        vector<string> IPs;
 
 };

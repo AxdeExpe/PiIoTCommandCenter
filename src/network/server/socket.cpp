@@ -1,5 +1,6 @@
 #include "socket.h"
 #include "../../microservices/interpreter/interpreter.cpp"
+#include "../../microservices/response/response.cpp"
 
 Socket::Socket(int port){
     
@@ -45,7 +46,7 @@ bool Socket::createSocket(){
 
         char clientIP[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, &(address.sin_addr), clientIP, INET_ADDRSTRLEN);
-        
+
         cout << "New client connected! IP: " << clientIP << endl;
 
         if (this->new_socket == -1) {
@@ -60,7 +61,10 @@ bool Socket::createSocket(){
 
         //interpret data and do something with it
         Interpreter *interpreter = new Interpreter(this->DataPaketReceive, clientIP);
-        interpreter->InterpretData();
+        int ret = interpreter->InterpretData();
+
+        Response *response = new Response(interpreter->InterpretData(), clientIP)
+
 
         delete this->DataPaketReceive;
         delete interpreter;
