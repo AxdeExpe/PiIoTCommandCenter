@@ -1,4 +1,4 @@
-The program lets several Raspberry Pi's communicate with each other.
+This program lets several Raspberry Pi's communicate with each other.
 
 You wil can send files, write, read and execute them.
 
