@@ -44,6 +44,7 @@ void Response::createDataPacket(){
 
 int Response::send(){
     
+    return 0;
 }
 
 Response::~Response(){

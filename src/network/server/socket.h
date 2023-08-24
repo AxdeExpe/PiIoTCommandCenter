@@ -5,6 +5,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <string.h>
+#include "../../microservices/interpreter/interpreter.cpp"
+#include "../../microservices/response/response.cpp"
 
 using namespace std;
 
@@ -14,6 +16,7 @@ class Socket{
         Socket(int port);
 
         bool createSocket();
+        bool listenAndReact();
 
         void receive();
         bool send(char *data);
@@ -23,6 +26,8 @@ class Socket{
 
     private:
     
+        const int chunkSize = 10;
+
         char* DataPaketSend;
         char* DataPaketReceive;
 
@@ -33,4 +38,6 @@ class Socket{
 
         int port;
         int ip;
+
+        Interpreter *interpreter;
 };

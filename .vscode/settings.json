@@ -61,6 +61,9 @@
         "thread": "cpp",
         "cinttypes": "cpp",
         "typeinfo": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "csignal": "cpp",
+        "map": "cpp",
+        "sstream": "cpp"
     }
 }

@@ -6,7 +6,7 @@
 int main(){
 
     //creates a socket on port 8080
-    Socket *socket = new Socket(PORT, "127.0.0.1");
+    Socket *socket = new Socket(PORT, "127.0.0.1"); //get own ip address
 
     if(socket->createSocket() == false){
         cout << "Error creating socket." << endl;

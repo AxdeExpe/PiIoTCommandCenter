@@ -11,7 +11,8 @@ class Interpreter{
 
     public:
 
-        Interpreter(char* dataPacket, char* clientIP);
+        Interpreter();
+        void setData(char* dataPacket, char* clientIP);
 
         int InterpretData();
 
@@ -19,6 +20,7 @@ class Interpreter{
 
     private:
         int checkRights();
+        void cleanup();
 
         char* dataPacket;
         char* clientIP;

@@ -28,6 +28,8 @@ int main(){
         return 1;
     }
 
+    sock->listenAndReact();
+
     delete sock;
 
     return 0;

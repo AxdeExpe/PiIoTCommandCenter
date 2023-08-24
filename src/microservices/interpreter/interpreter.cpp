@@ -1,13 +1,16 @@
 #include "interpreter.h"
 
-Interpreter::Interpreter(char* dataPacket, char* clientIP){
+Interpreter::Interpreter(){
+
+}
+
+void Interpreter::setData(char* dataPacket, char* clientIP){
     this->dataPacket = new char[strlen(dataPacket) + 1];
     strcpy(this->dataPacket, dataPacket);
 
     this->clientIP = new char[strlen(clientIP) + 1];
     strcpy(this->clientIP, clientIP);
 }
-
 
 /*
     Datastructure in the dataPacket
@@ -30,6 +33,7 @@ Interpreter::Interpreter(char* dataPacket, char* clientIP){
 
 /*
     ret val:
+     0: login successful
     -1: unable to interpret the data packet
     -2: unable to open the json file
     -3: client is already connected
@@ -58,8 +62,11 @@ int Interpreter::InterpretData(){
 
                     //check if the client is already connected
                     for(int i = 0; i < IPs.size(); i++){
+                        cout << this->IPs[i] << endl;
                         if(this->IPs[i] == this->clientIP){
                             cout << "Client is already connected! IP: " << this->clientIP << endl;
+                            cleanup();
+
                             return -3;
                         }
                     }
@@ -71,7 +78,9 @@ int Interpreter::InterpretData(){
 
                     if (!data.is_open()) {
                         cout << "Error opening file" << endl;
-                        return -1;
+                        cleanup();
+
+                        return -2;
                     }
 
                     //read the json file
@@ -89,11 +98,13 @@ int Interpreter::InterpretData(){
                         j++;
                     }
 
-                    //check if the ip and password does match
+                    //check if the ip and password does match<<
                     for(int i = 0; i < root["worker"].size(); i++){
                         if(strcmp(this->clientIP, root["worker"][i]["ip"].asCString()) == 0){
                             if(strcmp(buffer, root["worker"][i]["pwd"].asCString()) == 0){
                                 cout << "Login successful" << endl;
+                                cleanup();
+
                                 return 0;
                             }
                         }
@@ -103,15 +114,20 @@ int Interpreter::InterpretData(){
                     this->IPs.pop_back();
 
                     cout << "Login failed" << endl;
-                    return -1;
+
+                    cleanup();
+
+                    return -4;
 
                 }
                 else{
+                    cleanup();
                     return -1; //unable to interpret the data packet
                 }
 
             }
             else{
+                cleanup();
                 return -1; //unable to interpret the data packet
 
             }
@@ -123,6 +139,7 @@ int Interpreter::InterpretData(){
 
         }
         else{
+            cleanup();
             return -1; //unable to interpret the data packet
         }
 
@@ -179,12 +196,23 @@ int Interpreter::InterpretData(){
 
     }
 
+    cleanup();
     return 0;
 }
 
+void Interpreter::cleanup(){
 
+    if(this->dataPacket){
+        delete[] this->dataPacket;
+        this->dataPacket = nullptr;
+    }
+
+    if(this->clientIP){
+        delete[] this->clientIP;
+        this->clientIP = nullptr;
+    }
+}
 
 Interpreter::~Interpreter(){
-    delete[] this->dataPacket;
-    delete[] this->clientIP;
+    cleanup();
 }

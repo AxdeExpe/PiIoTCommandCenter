@@ -1,6 +1,4 @@
 #include "socket.h"
-#include "../../microservices/interpreter/interpreter.cpp"
-#include "../../microservices/response/response.cpp"
 
 Socket::Socket(int port){
     
@@ -30,16 +28,21 @@ bool Socket::createSocket(){
         cout << "Error binding socket to port " << port << endl;
         return false;
     }
+    return true;
+}
 
-    if (listen(server_fd, 10) < 0) { //10 clients
+
+bool Socket::listenAndReact() {
+    if (listen(server_fd, 10) < 0) { // 10 clients
         cout << "Error listening on port " << port << endl;
         return false;
     }
-    
-    
-    while(true){
 
-        if (( this->new_socket = accept(server_fd, (struct sockaddr*)&address, (socklen_t*)&addrlen)) < 0) {
+    // Create the interpreter instance outside the loop
+    this->interpreter = new Interpreter();
+
+    while (true) {
+        if ((this->new_socket = accept(server_fd, (struct sockaddr*)&address, (socklen_t*)&addrlen)) < 0) {
             cout << "Error accepting client connection." << endl;
             return false;
         }
@@ -48,64 +51,52 @@ bool Socket::createSocket(){
         inet_ntop(AF_INET, &(address.sin_addr), clientIP, INET_ADDRSTRLEN);
 
         cout << "New client connected! IP: " << clientIP << endl;
-
-        if (this->new_socket == -1) {
-            cout << "Error accepting client connection." << endl;
-            continue;
-        }
-
         cout << "Client accepted" << endl;
 
-        //receive data
+        // Receive data
         receive();
 
-        //interpret data and do something with it
-        Interpreter *interpreter = new Interpreter(this->DataPaketReceive, clientIP);
-        int ret = interpreter->InterpretData();
+        // Interpret data and do something with it
+        this->interpreter->setData(this->DataPaketReceive, clientIP);
+        Response *response = new Response(this->interpreter->InterpretData(), clientIP);
 
-        Response *response = new Response(interpreter->InterpretData(), clientIP)
+        delete[] this->DataPaketReceive;
+        this->DataPaketReceive = nullptr;
 
-
-        delete this->DataPaketReceive;
-        delete interpreter;
-
-
-        //send response
+        // Send response
 
         close(this->new_socket);
     }
+
+    // Cleanup
+    delete this->interpreter;
+    return true;
 }
 
-void Socket::receive(){
 
-    int bufferSize = 0;
-    this->DataPaketReceive = nullptr;
+
+
+void Socket::receive(){
+    std::vector<char> dataBuffer; // Use std::vector for dynamic array
 
     while (true) {
-        char chunk[10]; // Buffer for Datachunks
+        char chunk[chunkSize];
         int bytesRead = recv(this->new_socket, chunk, sizeof(chunk), 0);
 
         if (bytesRead <= 0) {
-            cout << "Connection closed" << endl;
-            break; // No Data or Error -> Stop receiving
+            std::cout << "Not more Data" << std::endl;
+            break;
         }
 
-        // Expand the buffer and copy the received chunk
-        char *newBuffer = new char[bufferSize + bytesRead];
-
-        if (this->DataPaketReceive) {
-            memcpy(newBuffer, this->DataPaketReceive, bufferSize);
-            delete this->DataPaketReceive; // Alten Puffer freigeben
-        }
-        memcpy(newBuffer + bufferSize, chunk, bytesRead);
-
-        this->DataPaketReceive = newBuffer;
-        bufferSize += bytesRead;
+        dataBuffer.insert(dataBuffer.end(), chunk, chunk + bytesRead);
     }
 
-    // Null-terminate the received data
-    if (this->DataPaketReceive) {
-        this->DataPaketReceive[bufferSize] = '\0';
+    if (!dataBuffer.empty()) {
+        dataBuffer.push_back('\0'); // Null-terminate the received data
+
+        // Convert std::vector<char> to char*
+        this->DataPaketReceive = new char[dataBuffer.size()];
+        std::copy(dataBuffer.begin(), dataBuffer.end(), this->DataPaketReceive);
     }
 }
 
@@ -121,6 +112,9 @@ bool Socket::send(char *data){
 Socket::~Socket(){
     if(this->DataPaketSend){
         delete[] this->DataPaketSend;
+    }
+    if(this->interpreter){
+        delete interpreter;
     }
     
     close(server_fd);
