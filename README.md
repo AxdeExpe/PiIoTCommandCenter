@@ -4,3 +4,4 @@ You wil can send files, write, read and execute them.
 
 You will can set the GPIO Pins on the other Raspberry Pi's from remote (Raspi -> Raspi)
 
+For intercommunication control, you can log in from one Raspberry Pi to another and distribute permissions.
