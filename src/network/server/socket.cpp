@@ -65,6 +65,8 @@ bool Socket::listenAndReact() {
 
         // Send response
 
+        delete response;
+
         close(this->new_socket);
     }
 
@@ -91,13 +93,11 @@ void Socket::receive(){
         dataBuffer.insert(dataBuffer.end(), chunk, chunk + bytesRead);
     }
 
-    if (!dataBuffer.empty()) {
-        dataBuffer.push_back('\0'); // Null-terminate the received data
+    dataBuffer.push_back('\0'); // Null-terminate the received data
 
-        // Convert std::vector<char> to char*
-        this->DataPaketReceive = new char[dataBuffer.size()];
-        std::copy(dataBuffer.begin(), dataBuffer.end(), this->DataPaketReceive);
-    }
+    // Convert std::vector<char> to char*
+    this->DataPaketReceive = new char[dataBuffer.size()];
+    copy(dataBuffer.begin(), dataBuffer.end(), this->DataPaketReceive);
 }
 
 bool Socket::send(char *data){
