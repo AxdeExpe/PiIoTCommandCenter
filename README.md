@@ -7,3 +7,5 @@ You will can set the GPIO Pins on the other Raspberry Pi's from remote (Raspi ->
 For intercommunication control, you can log in from one Raspberry Pi to another and distribute permissions.
 
 Each authorized Raspberry Pi can retrieve files of any type.
+
+Each Raspberry Pi can send commands to another.
