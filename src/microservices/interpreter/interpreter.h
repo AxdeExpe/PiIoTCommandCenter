@@ -3,6 +3,7 @@
 #include <jsoncpp/json/json.h>
 #include <string.h>
 #include <vector>
+#include <bitset>
 
 using namespace std;
 using namespace Json;
@@ -28,6 +29,7 @@ class Interpreter{
 
         char* dataPacket;
         char* clientIP;
-        vector<string> IPs;
 
+        vector<pair<string, bitset<3>>> IPs; //IP's and their rights (0 = send data, 1 = access to gpio, 2 = access to file system)
+        
 };

@@ -18,7 +18,7 @@ void Interpreter::setData(char* dataPacket, char* clientIP){
     1. Byte: 0x00 = Request, 0x01 = Response
     2. Byte: 0x00 = None, 0x01 = Success, 0x02 = Failure -> response from the previous data packet
     3. Byte: 0x00 = Login, 0x01 = Logout, 0x02 = Get Data, 0x03 = Set Data
-    4. Byte: 0x00 = No Data, 0x01 = Commands, 0x02 = File
+    4. Byte: 0x00 = No Data, 0x01 = Commands, 0x02 = File, 0x03 = Database -> data from database
     5 - n. Byte: Data
 */
 
@@ -40,6 +40,14 @@ void Interpreter::setData(char* dataPacket, char* clientIP){
 */
 
 /*
+    Get Data:
+    1. Byte: 0x00 = Request
+    2. Byte: 0x00 | 0x01 | 0x02 = None | Success | Failure
+    3. Byte: 0x02 = Get Data
+    4. Byte: 0x01 | 0x02 | 0x03 = Commands | File | Database
+*/
+
+/*
     Response:
     1. Byte: 0x01 = Response
     2. Byte: 0x01 = Success, 0x02 = Failure
@@ -50,7 +58,7 @@ void Interpreter::setData(char* dataPacket, char* clientIP){
     ret val:
      0: login successful
     -1: unable to interpret the data packet
-    -2: unable to open the json file
+    -2: unable to open the file
     -3: client is already connected
     -4: login failed
     -5: logout failed
@@ -64,11 +72,10 @@ int Interpreter::InterpretData(){
     cout << this->dataPacket << endl;
 
     //check the data packet
-    //request
+    //request 
     if(this->dataPacket[0] == '0'){
-        cout << "sdf" << endl;
 
-        //check the response
+        //check the request
         if(this->dataPacket[1] == '0'){
             //None response
             if(this->dataPacket[2] == '0'){
@@ -141,8 +148,8 @@ int Interpreter::InterpretData(){
                 }
 
             }
+            //logout
             else if(this->dataPacket[2] == '1'){
-
                 if(this->dataPacket[3] == '0'){
                     
                     if(this->logout()){
@@ -155,15 +162,56 @@ int Interpreter::InterpretData(){
                         cout << "Logout failed" << endl;
                         cleanup();
 
-                        return -5; //unable to interpret the data packet
+                        return -5; //logout failed
                     }
-
                 }
                 else{
                     cleanup();
                     return -1; //unable to interpret the data packet
                 }
 
+            }
+            //Get data
+            else if(this->dataPacket[2] == '2'){
+                if(this->dataPacket[3] == '1'){
+                    //interpret the commands
+                }
+                else if(this->dataPacket[3] == '2'){
+                    //get the file
+                    string dataPacket(this->dataPacket); //data packet as string
+                    string fileName = dataPacket.substr(4, dataPacket.size() - 4); //get the path of the file
+                    cout << fileName << endl;
+
+                    ifstream file(fileName, ifstream::binary | ios::ate);
+
+                    if(!file.is_open()){
+                        cout << "Error opening file" << endl;
+                        cleanup();
+
+                        return -2;
+                    }
+
+                    streampos fileSize = file.tellg();
+                    char* buffer = new char[fileSize];
+
+                    file.seekg(0, ios::beg); // Go back to the beginning of the file
+                    file.read(buffer, fileSize);
+    
+                    file.close();
+
+                    //send the file to the client
+                    cout << buffer << endl;
+
+                    delete[] buffer;
+                }
+                else if(this->dataPacket[3] == '3'){
+                    //interpret the sql query
+                }
+                else{
+                    cleanup();
+                    return -1; //unable to interpret the data packet
+
+                }
             }
             else{
                 cleanup();
@@ -251,10 +299,10 @@ bool Interpreter::checkLogin(){
 }
 
 bool Interpreter::logout(){
-
     for(int i = 0; i < this->IPs.size(); i++){
         if(this->IPs[i] == this->clientIP){
             this->IPs.erase(this->IPs.begin() + i);
+            cout << "Client logged out! IP: " << this->clientIP << endl;
             return true;
         }
     }

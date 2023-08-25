@@ -34,7 +34,7 @@ bool Socket::createSocket(){
 
 
 bool Socket::listenAndReact() {
-    if (listen(server_fd, 10) < 0) { // 10 clients
+    if (listen(server_fd, 1) < 0) { // 10 clients
         cout << "Error listening on port " << port << endl;
         return false;
     }

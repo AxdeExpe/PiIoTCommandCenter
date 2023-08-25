@@ -2,6 +2,10 @@
 #include <cstring>
 #define PORT 8080
 
+//predefined data packets
+#define LOGIN "0000admin" //packet + password
+#define LOGOUT "0010"
+#define GETDATA "0022../data.txt" //packet + path to file
 
 int main(){
 
@@ -13,25 +17,42 @@ int main(){
         return 1;
     }
 
-        string s = "0000admin";
-        socket->setDataPaketSend(s.c_str());
-        bool sent = socket->sendData();
-        delete socket;
+    string login = LOGIN;
+    socket->setDataPaketSend(login);
+    bool sent = socket->sendData();
+    delete socket;
+
+ 
 
 
-        Socket *ss = new Socket(PORT, "127.0.0.1");
+    Socket *ss = new Socket(PORT, "127.0.0.1");
 
-        if(!socket->createSocket()){
-            cout << "Error creating socket." << endl;
-            return 1;
-        }
+    if(!ss->createSocket()){
+        cout << "Error creating socket." << endl;
+        return 1;
+    }
 
-        string logout = "0100";
-        socket->setDataPaketSend(logout.c_str());
-        sent = ss->sendData();
-        delete socket;
+    string logout = LOGOUT;
+    ss->setDataPaketSend(logout);
+    bool sent1 = ss->sendData();
+    delete ss;
 
-        cout << "Socket deleted" << endl;
+
+
+
+    Socket *s = new Socket(PORT, "127.0.0.1");
+
+    if(!s->createSocket()){
+        cout << "Error creating socket." << endl;
+        return 1;
+    }
+
+    string data = GETDATA;
+    s->setDataPaketSend(data);
+    bool sent2 = s->sendData();
+    delete s;
+
+    cout << "Socket deleted" << endl;
 
     return 0;
 }

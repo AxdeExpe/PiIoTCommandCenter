@@ -1,5 +1,4 @@
 #include "socket.h"
-#include <string.h>
 
 Socket::Socket(int port, string ip){
     this->port = port;
@@ -38,20 +37,24 @@ bool Socket::createSocket(){
 }   
 
 bool Socket::sendData(){
-    if (this->DataPaketSend) {
-        int sentBytes = send(client_fd, this->DataPaketSend, strlen(this->DataPaketSend), 0);
+
+    cout << this->DataPaketSend << endl;
+
+
+        int sentBytes = send(client_fd, this->DataPaketSend.c_str(), this->DataPaketSend.size(), 0);
         if (sentBytes == -1) {
             cout << "Error sending data" << endl;
-            delete[] this->DataPaketSend;
+
             this->DataPaketSend = nullptr;
+            close(client_fd);
             return false;
         }
         cout << "Data sent" << endl;
-        delete[] this->DataPaketSend;
-        this->DataPaketSend = nullptr; // Set the pointer to nullptr after deletion
+        close(client_fd);
         return true;
-    }
-        return false; // No data to send
+    
+    close(client_fd);
+    return false; // No data to send
 }
 
 void Socket::receive(){
@@ -64,10 +67,6 @@ Socket::~Socket(){
 
     if(this->DataPaketReceive){
         delete[] this->DataPaketReceive;
-    }
-
-    if(this->DataPaketSend){
-        delete[] this->DataPaketSend;
     }
 
     close(client_fd);

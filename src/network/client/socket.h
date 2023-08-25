@@ -18,12 +18,7 @@ class Socket{
         bool sendData();
 
         void setDataPaketSend(string data){
-
-            if (this->DataPaketSend) {
-                delete[] this->DataPaketSend;
-            }
-            this->DataPaketSend = new char[strlen(data.c_str()) + 1];
-            strcpy(this->DataPaketSend, data.c_str());
+            this->DataPaketSend = data;
         }
 
 
@@ -32,7 +27,7 @@ class Socket{
 
     private:
 
-        char* DataPaketSend;
+        string DataPaketSend;
         char* DataPaketReceive;
 
         int status, valread, client_fd;
