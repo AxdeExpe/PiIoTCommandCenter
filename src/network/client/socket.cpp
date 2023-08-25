@@ -38,18 +38,19 @@ bool Socket::createSocket(){
 }   
 
 bool Socket::sendData(){
-     if (this->DataPaketSend) {
-            int sentBytes = send(client_fd, this->DataPaketSend, strlen(this->DataPaketSend), 0);
-            if (sentBytes == -1) {
-                cout << "Error sending data" << endl;
-                delete[] this->DataPaketSend;
-                return false;
-            }
-            cout << "Data sent" << endl;
+    if (this->DataPaketSend) {
+        int sentBytes = send(client_fd, this->DataPaketSend, strlen(this->DataPaketSend), 0);
+        if (sentBytes == -1) {
+            cout << "Error sending data" << endl;
             delete[] this->DataPaketSend;
-            this->DataPaketSend = nullptr; // Set the pointer to nullptr after deletion
-            return true;
+            this->DataPaketSend = nullptr;
+            return false;
         }
+        cout << "Data sent" << endl;
+        delete[] this->DataPaketSend;
+        this->DataPaketSend = nullptr; // Set the pointer to nullptr after deletion
+        return true;
+    }
         return false; // No data to send
 }
 

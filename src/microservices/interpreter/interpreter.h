@@ -20,7 +20,11 @@ class Interpreter{
 
     private:
         int checkRights();
+        bool checkLogin();
+        
         void cleanup();
+
+        bool logout();
 
         char* dataPacket;
         char* clientIP;

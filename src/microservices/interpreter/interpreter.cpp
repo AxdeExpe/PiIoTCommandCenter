@@ -32,13 +32,28 @@ void Interpreter::setData(char* dataPacket, char* clientIP){
 */
 
 /*
+    Logout:
+    1. Byte: 0x00 = Request
+    2. Byte: 0x00 = None
+    3. Byte: 0x01 = Logout
+    4. Byte: 0x00 = No Data
+*/
+
+/*
+    Response:
+    1. Byte: 0x01 = Response
+    2. Byte: 0x01 = Success, 0x02 = Failure
+    3. 
+*/
+
+/*
     ret val:
      0: login successful
     -1: unable to interpret the data packet
     -2: unable to open the json file
     -3: client is already connected
     -4: login failed
-    -5:
+    -5: logout failed
 */
 
 int Interpreter::InterpretData(){
@@ -126,6 +141,30 @@ int Interpreter::InterpretData(){
                 }
 
             }
+            else if(this->dataPacket[2] == '1'){
+
+                if(this->dataPacket[3] == '0'){
+                    
+                    if(this->logout()){
+                        cout << "Logout successful" << endl;
+                        cleanup();
+
+                        return 0;
+                    }
+                    else{
+                        cout << "Logout failed" << endl;
+                        cleanup();
+
+                        return -5; //unable to interpret the data packet
+                    }
+
+                }
+                else{
+                    cleanup();
+                    return -1; //unable to interpret the data packet
+                }
+
+            }
             else{
                 cleanup();
                 return -1; //unable to interpret the data packet
@@ -198,6 +237,29 @@ int Interpreter::InterpretData(){
 
     cleanup();
     return 0;
+}
+
+bool Interpreter::checkLogin(){
+
+    for(int i = 0; i < this->IPs.size(); i++){
+        if(this->IPs[i] == this->clientIP){
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Interpreter::logout(){
+
+    for(int i = 0; i < this->IPs.size(); i++){
+        if(this->IPs[i] == this->clientIP){
+            this->IPs.erase(this->IPs.begin() + i);
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void Interpreter::cleanup(){

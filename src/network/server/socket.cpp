@@ -5,6 +5,7 @@ Socket::Socket(int port){
     this->port = port;
 }
 
+
 bool Socket::createSocket(){
 
     // Creating socket file descriptor
@@ -38,7 +39,6 @@ bool Socket::listenAndReact() {
         return false;
     }
 
-    // Create the interpreter instance outside the loop
     this->interpreter = new Interpreter();
 
     while (true) {
@@ -58,10 +58,11 @@ bool Socket::listenAndReact() {
 
         // Interpret data and do something with it
         this->interpreter->setData(this->DataPaketReceive, clientIP);
-        Response *response = new Response(this->interpreter->InterpretData(), clientIP);
-
+        
         delete[] this->DataPaketReceive;
         this->DataPaketReceive = nullptr;
+
+        Response *response = new Response(this->interpreter->InterpretData(), clientIP);
 
         // Send response
 
@@ -76,10 +77,8 @@ bool Socket::listenAndReact() {
 }
 
 
-
-
 void Socket::receive(){
-    std::vector<char> dataBuffer; // Use std::vector for dynamic array
+    vector<char> dataBuffer; // Use vector for dynamic array
 
     while (true) {
         char chunk[chunkSize];
@@ -95,18 +94,17 @@ void Socket::receive(){
 
     dataBuffer.push_back('\0'); // Null-terminate the received data
 
-    // Convert std::vector<char> to char*
+    // Convert vector<char> to char*
     this->DataPaketReceive = new char[dataBuffer.size()];
     copy(dataBuffer.begin(), dataBuffer.end(), this->DataPaketReceive);
+    this->DataPaketReceive[dataBuffer.size()] = '\0'; // Null-terminate the received data
 }
+
 
 bool Socket::send(char *data){
 
     return true;
 }
-
-
-
 
 
 Socket::~Socket(){
