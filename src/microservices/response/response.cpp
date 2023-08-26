@@ -3,6 +3,8 @@
 Response::Response(int ret, char* clientIP){
     this->ret = ret;
 
+    cout << "RET: " << ret << endl;
+
     this->clientIP = new char[strlen(clientIP) + 1];
     strcpy(this->clientIP, clientIP);
 }

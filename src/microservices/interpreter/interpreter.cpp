@@ -62,6 +62,7 @@ void Interpreter::setData(char* dataPacket, char* clientIP){
     -3: client is already connected
     -4: login failed
     -5: logout failed
+    -6: client is not connected
 */
 
 int Interpreter::InterpretData(){
@@ -70,6 +71,22 @@ int Interpreter::InterpretData(){
     }
 
     cout << this->dataPacket << endl;
+
+    bool connected = false;
+
+    //check if the client is not already connected
+    for(int i = 0; i < IPs.size(); i++){
+        cout << this->IPs[i].first << endl;
+        if(this->IPs[i].first != this->clientIP && i == IPs.size() - 1){
+            cout << "Client is not already connected! IP: " << this->clientIP << endl;
+            connected = false;
+        }
+        if(this->IPs[i].first == this->clientIP){
+            cout << "Client is already connected! IP: " << this->clientIP << endl;
+            connected = true;
+        }
+    }
+
 
     //check the data packet
     //request 
@@ -80,21 +97,18 @@ int Interpreter::InterpretData(){
             //None response
             if(this->dataPacket[2] == '0'){
                 //for login only
-                if(this->dataPacket[3] == '0'){
+                if(this->dataPacket[3] == '0' && connected == false){
 
                     //check if the client is already connected
                     for(int i = 0; i < IPs.size(); i++){
-                        cout << this->IPs[i] << endl;
-                        if(this->IPs[i] == this->clientIP){
+                        cout << this->IPs[i].first << endl;
+                        if(this->IPs[i].first == this->clientIP){
                             cout << "Client is already connected! IP: " << this->clientIP << endl;
                             cleanup();
 
                             return -3;
                         }
                     }
-
-                    //add the client to the list if he is not already connected
-                    IPs.push_back(this->clientIP);
 
                     ifstream data("../../microservices/data.json", ifstream::binary);
 
@@ -125,15 +139,18 @@ int Interpreter::InterpretData(){
                         if(strcmp(this->clientIP, root["worker"][i]["ip"].asCString()) == 0){
                             if(strcmp(buffer, root["worker"][i]["pwd"].asCString()) == 0){
                                 cout << "Login successful" << endl;
+                                
+                                //add the client to the list if he is not already connected
+                                IPs.push_back(make_pair(this->clientIP, bitset<3>(root["worker"][i]["rights"].asCString())));
+                                
+                                cout << "Client logged in! IP: " << this->IPs[0].first << " " << this->IPs[0].second << endl;
+
                                 cleanup();
 
                                 return 0;
                             }
                         }
                     }
-
-                    //send response that the login failed
-                    this->IPs.pop_back();
 
                     cout << "Login failed" << endl;
 
@@ -149,7 +166,7 @@ int Interpreter::InterpretData(){
 
             }
             //logout
-            else if(this->dataPacket[2] == '1'){
+            else if(this->dataPacket[2] == '1' && connected == true){
                 if(this->dataPacket[3] == '0'){
                     
                     if(this->logout()){
@@ -172,7 +189,7 @@ int Interpreter::InterpretData(){
 
             }
             //Get data
-            else if(this->dataPacket[2] == '2'){
+            else if(this->dataPacket[2] == '2' && connected == true){
                 if(this->dataPacket[3] == '1'){
                     //interpret the commands
                 }
@@ -213,6 +230,10 @@ int Interpreter::InterpretData(){
 
                 }
             }
+            else if(!connected){
+                cleanup();
+                return -6; //unable to interpret the data packet
+            }
             else{
                 cleanup();
                 return -1; //unable to interpret the data packet
@@ -233,33 +254,18 @@ int Interpreter::InterpretData(){
     }
     
     //response
-    if(this->dataPacket[0] == 0x01){
+    if(this->dataPacket[0] == 0x01 && connected == true){
 
     }
 
     //success
-    if(this->dataPacket[1] == 0x00){
+    if(this->dataPacket[1] == 0x00 && connected == true){
 
 
     }
 
     //failure
-    if(this->dataPacket[1] == 0x01){
-
-    }
-
-    //Login
-    if(this->dataPacket[2] == 0x00){
-
-    }
-
-    //Logout
-    if(this->dataPacket[2] == 0x01){
-
-    }
-
-    //Get Data
-    if(this->dataPacket[2] == 0x02){
+    if(this->dataPacket[1] == 0x01 && connected == true){
 
     }
 
@@ -290,7 +296,7 @@ int Interpreter::InterpretData(){
 bool Interpreter::checkLogin(){
 
     for(int i = 0; i < this->IPs.size(); i++){
-        if(this->IPs[i] == this->clientIP){
+        if(this->IPs[i].first == this->clientIP){
             return true;
         }
     }
@@ -300,7 +306,7 @@ bool Interpreter::checkLogin(){
 
 bool Interpreter::logout(){
     for(int i = 0; i < this->IPs.size(); i++){
-        if(this->IPs[i] == this->clientIP){
+        if(this->IPs[i].first == this->clientIP){
             this->IPs.erase(this->IPs.begin() + i);
             cout << "Client logged out! IP: " << this->clientIP << endl;
             return true;
