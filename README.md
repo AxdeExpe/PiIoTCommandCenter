@@ -1,11 +1,10 @@
-This program lets several Raspberry Pi's communicate with each other.
+# Raspberry Pi Kommunikationsprogramm
 
-You will can send files, write, read and execute them.
+Dieses Programm ermöglicht es mehreren Raspberry Pis, miteinander zu kommunizieren.
 
-You will can set the GPIO Pins on the other Raspberry Pi's from remote (Raspi -> Raspi)
-
-For intercommunication control, you can log in from one Raspberry Pi to another and distribute permissions.
-
-Each authorized Raspberry Pi can retrieve files of any type.
-
-Each Raspberry Pi can send commands to another.
+Folgende Funktionen stehen zur Verfügung:
+- Dateien können gesendet, geschrieben, gelesen und ausgeführt werden.
+- Die GPIO-Pins auf anderen Raspberry Pis können aus der Ferne gesteuert werden (Raspi -> Raspi).
+- Zur Steuerung der Interkommunikation ist es möglich, sich von einem Raspberry Pi aus bei einem anderen anzumelden und Berechtigungen zu verteilen.
+- Jeder autorisierte Raspberry Pi kann Dateien jeglichen Typs abrufen.
+- Jeder Raspberry Pi kann Befehle an einen anderen senden.
