@@ -1,4 +1,5 @@
 #include "interpreter.h"
+#include "../GPIO/GPIO.cpp"
 
 Interpreter::Interpreter(){
 
@@ -16,7 +17,7 @@ void Interpreter::setData(char* dataPacket, char* clientIP){
     Datastructure in the dataPacket
 
     1. Byte: 0x00 = Request, 0x01 = Response
-    2. Byte: 0x00 = None, 0x01 = Success, 0x02 = Failure -> response from the previous data packet
+    2. Byte: 0x00 = None, (0x01 = Success, 0x02 = Failure) -> response from the previous data packet
     3. Byte: 0x00 = Login, 0x01 = Logout, 0x02 = Get Data, 0x03 = Set Data
     4. Byte: 0x00 = No Data, 0x01 = Commands, 0x02 = File, 0x03 = Database -> data from database
     5 - n. Byte: Data
@@ -62,7 +63,7 @@ void Interpreter::setData(char* dataPacket, char* clientIP){
     -3: client is already connected
     -4: login failed
     -5: logout failed
-    -6: client is not connected
+    -6: client is not logged in
 */
 
 int Interpreter::InterpretData(){
@@ -73,6 +74,7 @@ int Interpreter::InterpretData(){
     cout << this->dataPacket << endl;
 
     bool connected = false;
+    int IPIndex = -1; //place in the IPs vector
 
     //check if the client is not already connected
     for(int i = 0; i < IPs.size(); i++){
@@ -97,7 +99,7 @@ int Interpreter::InterpretData(){
             //None response
             if(this->dataPacket[2] == '0'){
                 //for login only
-                if(this->dataPacket[3] == '0' && connected == false){
+                if(this->dataPacket[3] == '0' && !connected){
 
                     //check if the client is already connected
                     for(int i = 0; i < IPs.size(); i++){
@@ -166,7 +168,7 @@ int Interpreter::InterpretData(){
 
             }
             //logout
-            else if(this->dataPacket[2] == '1' && connected == true){
+            else if(this->dataPacket[2] == '1' && connected){
                 if(this->dataPacket[3] == '0'){
                     
                     if(this->logout()){
@@ -189,11 +191,14 @@ int Interpreter::InterpretData(){
 
             }
             //Get data
-            else if(this->dataPacket[2] == '2' && connected == true){
-                if(this->dataPacket[3] == '1'){
-                    //interpret the commands
+            else if(this->dataPacket[2] == '2' && connected && (this->IPs[IPIndex].second[0] == 1 || this->IPs[IPIndex].second[2] == 1)){
+                if(this->dataPacket[3] == '1' && this->IPs[IPIndex].second[0] == 1){
+                    //interpret the commands -> GPIO
+
+
+
                 }
-                else if(this->dataPacket[3] == '2'){
+                else if(this->dataPacket[3] == '2' && this->IPs[IPIndex].second[1] == 1){
                     //get the file
                     string dataPacket(this->dataPacket); //data packet as string
                     string fileName = dataPacket.substr(4, dataPacket.size() - 4); //get the path of the file
@@ -221,7 +226,7 @@ int Interpreter::InterpretData(){
 
                     delete[] buffer;
                 }
-                else if(this->dataPacket[3] == '3'){
+                else if(this->dataPacket[3] == '3' && this->IPs[IPIndex].second[1] == 1){
                     //interpret the sql query
                 }
                 else{
@@ -232,7 +237,7 @@ int Interpreter::InterpretData(){
             }
             else if(!connected){
                 cleanup();
-                return -6; //unable to interpret the data packet
+                return -6; //client is not logged in
             }
             else{
                 cleanup();
@@ -241,7 +246,7 @@ int Interpreter::InterpretData(){
             }
         }
         else if(this->dataPacket[1] == 0x01){
-
+            
         }
         else if(this->dataPacket[1] == 0x02){
 

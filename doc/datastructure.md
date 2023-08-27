@@ -14,8 +14,10 @@ ip: is the ip address of the worker
 pwd: is the password of the worker
 rights: are the rights of the worker
 - s: can the worker send data? (example: files)
-- g: can the worker request the gpio head of the server?
+- g: can the worker request the gpio pins of the server?
 - f: can the worker read or write files on the server?
+
+--> 0 for no, 1 for yes
 
 If somethingthe worker shouldn't has rights of something just write "-"
 
