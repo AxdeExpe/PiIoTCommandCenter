@@ -57,6 +57,7 @@ void Interpreter::setData(char* dataPacket, char* clientIP){
 
 /*
     ret val:
+     1: File sent
      0: login successful
     -1: unable to interpret the data packet
     -2: unable to open the file
@@ -64,6 +65,7 @@ void Interpreter::setData(char* dataPacket, char* clientIP){
     -4: login failed
     -5: logout failed
     -6: client is not logged in
+    -7: no rights for the command
 */
 
 int Interpreter::InterpretData(){
@@ -89,213 +91,141 @@ int Interpreter::InterpretData(){
         }
     }
 
-
-    //check the data packet
-    //request 
-    if(this->dataPacket[0] == '0'){
-
-        //check the request
-        if(this->dataPacket[1] == '0'){
-            //None response
-            if(this->dataPacket[2] == '0'){
-                //for login only
-                if(this->dataPacket[3] == '0' && !connected){
-
-                    //check if the client is already connected
-                    for(int i = 0; i < IPs.size(); i++){
-                        cout << this->IPs[i].first << endl;
-                        if(this->IPs[i].first == this->clientIP){
-                            cout << "Client is already connected! IP: " << this->clientIP << endl;
-                            cleanup();
-
-                            return -3;
-                        }
-                    }
-
-                    ifstream data("../../microservices/data.json", ifstream::binary);
-
-                    if (!data.is_open()) {
-                        cout << "Error opening file" << endl;
-                        cleanup();
-
-                        return -2;
-                    }
-
-                    //read the json file
-                    Value root;
-                    data >> root;
-
-                    data.close();
-
-                    char buffer[strlen(this->dataPacket) - 4];
-                    int j = 0;
-
-                    //extract the password
-                    for(int i = 4; i <= strlen(this->dataPacket); i++){
-                        buffer[j] = this->dataPacket[i];
-                        j++;
-                    }
-
-                    //check if the ip and password does match<<
-                    for(int i = 0; i < root["worker"].size(); i++){
-                        if(strcmp(this->clientIP, root["worker"][i]["ip"].asCString()) == 0){
-                            if(strcmp(buffer, root["worker"][i]["pwd"].asCString()) == 0){
-                                cout << "Login successful" << endl;
-                                
-                                //add the client to the list if he is not already connected
-                                IPs.push_back(make_pair(this->clientIP, bitset<3>(root["worker"][i]["rights"].asCString())));
-                                
-                                cout << "Client logged in! IP: " << this->IPs[0].first << " " << this->IPs[0].second << endl;
-
-                                cleanup();
-
-                                return 0;
-                            }
-                        }
-                    }
-
-                    cout << "Login failed" << endl;
-
-                    cleanup();
-
-                    return -4;
-
-                }
-                else{
-                    cleanup();
-                    return -1; //unable to interpret the data packet
-                }
-
-            }
-            //logout
-            else if(this->dataPacket[2] == '1' && connected){
-                if(this->dataPacket[3] == '0'){
-                    
-                    if(this->logout()){
-                        cout << "Logout successful" << endl;
-                        cleanup();
-
-                        return 0;
-                    }
-                    else{
-                        cout << "Logout failed" << endl;
-                        cleanup();
-
-                        return -5; //logout failed
-                    }
-                }
-                else{
-                    cleanup();
-                    return -1; //unable to interpret the data packet
-                }
-
-            }
-            //Get data
-            else if(this->dataPacket[2] == '2' && connected && (this->IPs[IPIndex].second[0] == 1 || this->IPs[IPIndex].second[2] == 1)){
-                if(this->dataPacket[3] == '1' && this->IPs[IPIndex].second[0] == 1){
-                    //interpret the commands -> GPIO
-
-
-
-                }
-                else if(this->dataPacket[3] == '2' && this->IPs[IPIndex].second[1] == 1){
-                    //get the file
-                    string dataPacket(this->dataPacket); //data packet as string
-                    string fileName = dataPacket.substr(4, dataPacket.size() - 4); //get the path of the file
-                    cout << fileName << endl;
-
-                    ifstream file(fileName, ifstream::binary | ios::ate);
-
-                    if(!file.is_open()){
-                        cout << "Error opening file" << endl;
-                        cleanup();
-
-                        return -2;
-                    }
-
-                    streampos fileSize = file.tellg();
-                    char* buffer = new char[fileSize];
-
-                    file.seekg(0, ios::beg); // Go back to the beginning of the file
-                    file.read(buffer, fileSize);
-    
-                    file.close();
-
-                    //send the file to the client
-                    cout << buffer << endl;
-
-                    delete[] buffer;
-                }
-                else if(this->dataPacket[3] == '3' && this->IPs[IPIndex].second[1] == 1){
-                    //interpret the sql query
-                }
-                else{
-                    cleanup();
-                    return -1; //unable to interpret the data packet
-
-                }
-            }
-            else if(!connected){
+    //login
+    if(this->dataPacket[0] == '0' && this->dataPacket[1] == '0'  && this->dataPacket[2] == '0' && this->dataPacket[3] == '0' && !connected){
+        //check if the client is already connected
+        for(int i = 0; i < IPs.size(); i++){
+            cout << this->IPs[i].first << endl;
+            if(this->IPs[i].first == this->clientIP){
+                cout << "Client is already connected! IP: " << this->clientIP << endl;
                 cleanup();
-                return -6; //client is not logged in
-            }
-            else{
-                cleanup();
-                return -1; //unable to interpret the data packet
 
+                return -3;
             }
         }
-        else if(this->dataPacket[1] == 0x01){
-            
-        }
-        else if(this->dataPacket[1] == 0x02){
 
+        ifstream data("../../microservices/data.json", ifstream::binary);
+
+        if (!data.is_open()) {
+            cout << "Error opening file" << endl;
+            cleanup();
+
+            return -2;
+        }
+
+        //read the json file
+        Value root;
+        data >> root;
+
+        data.close();
+
+        char buffer[strlen(this->dataPacket) - 4];
+        int j = 0;
+
+        //extract the password
+        for(int i = 4; i <= strlen(this->dataPacket); i++){
+            buffer[j] = this->dataPacket[i];
+            j++;
+        }
+
+        //check if the ip and password does match<<
+        for(int i = 0; i < root["worker"].size(); i++){
+            if(strcmp(this->clientIP, root["worker"][i]["ip"].asCString()) == 0){
+                if(strcmp(buffer, root["worker"][i]["pwd"].asCString()) == 0){
+                    cout << "Login successful" << endl;
+                                
+                    //add the client to the list if he is not already connected
+                    IPs.push_back(make_pair(this->clientIP, bitset<3>(root["worker"][i]["rights"].asCString())));
+                                
+                    cout << "Client logged in! IP: " << this->IPs[0].first << " " << this->IPs[0].second << endl;
+
+                    cleanup();
+
+                    return 0;
+                }
+            }
+        }
+
+        cout << "Login failed" << endl;
+
+        cleanup();
+
+        return -4;
+    }
+
+    //logout
+    else if(this->dataPacket[0] == '0' && this->dataPacket[1] == '0'  && this->dataPacket[2] == '1' && this->dataPacket[3] == '0' && connected){
+        if(this->logout()){
+            cout << "Logout successful" << endl;
+            cleanup();
+
+            return 0;
         }
         else{
+            cout << "Logout failed" << endl;
             cleanup();
-            return -1; //unable to interpret the data packet
+
+            return -5; //logout failed
         }
-
     }
+
+    //get data
+    else if(this->dataPacket[0] == '0' && this->dataPacket[1] == '0' && this->dataPacket[2] == '2' && connected && (this->IPs[IPIndex].second[0] == 1 || this->IPs[IPIndex].second[2] == 1)){
+        cout << "asdasdasd " << endl;
+        if(this->dataPacket[3] == '1' && this->IPs[IPIndex].second[0] == 1){
+            //interpret the commands -> GPIO
+
+
+
+        }
+        else if(this->dataPacket[3] == '2' && this->IPs[IPIndex].second[1] == 1){
+            //get the file
+            cout << "Get file" << endl;
+            string dataPacket(this->dataPacket); //data packet as string
+            string fileName = dataPacket.substr(4, dataPacket.size() - 4); //get the path of the file
+            cout << fileName << endl;
+
+            ifstream file(fileName, ifstream::binary | ios::ate);
+
+            if(!file.is_open()){
+                cout << "Error opening file" << endl;
+                cleanup();
+
+                return -2;
+            }
+
+            streampos fileSize = file.tellg();
+            char* buffer = new char[fileSize];
+
+            file.seekg(0, ios::beg); // Go back to the beginning of the file
+            file.read(buffer, fileSize);
     
-    //response
-    if(this->dataPacket[0] == 0x01 && connected == true){
+            file.close();
 
+            //send the file to the client
+            cout << buffer << endl;
+
+            delete[] buffer;
+            return 1;
+        }
+        else if(this->dataPacket[3] == '3' && this->IPs[IPIndex].second[1] == 1){
+            //interpret the sql query
+
+
+
+        }
+        return -7;
     }
 
-    //success
-    if(this->dataPacket[1] == 0x00 && connected == true){
-
-
+    else if(!connected){
+        cleanup();
+        return -6; //client is not logged in
     }
 
-    //failure
-    if(this->dataPacket[1] == 0x01 && connected == true){
-
+    else{
+        cleanup();
+        return -1; //unable to interpret the data packet
     }
-
-    //Set Data
-    if(this->dataPacket[2] == 0x03){
-
-    }
-
-    //No Data
-    if(this->dataPacket[3] == 0x00){
-
-    }
-
-    //Commands
-    if(this->dataPacket[3] == 0x01){
-
-    }
-
-    //File
-    if(this->dataPacket[3] == 0x02){
-
-    }
-
-    cleanup();
-    return 0;
 }
 
 bool Interpreter::checkLogin(){

@@ -24,7 +24,7 @@ int main(){
 
  
 
-
+/*
     Socket *ss = new Socket(PORT, "127.0.0.1");
 
     if(!ss->createSocket()){
@@ -37,7 +37,7 @@ int main(){
     bool sent1 = ss->sendData();
     delete ss;
 
-
+*/
 
 
     Socket *s = new Socket(PORT, "127.0.0.1");
@@ -55,4 +55,5 @@ int main(){
     cout << "Socket deleted" << endl;
 
     return 0;
+
 }
