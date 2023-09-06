@@ -4,22 +4,14 @@ Database::Database(){
 
 }
 
-bool Database::createDatabase(){
+
+
+
+bool Database::createDatabase(string databaseName){
 
 }
 
-bool Database::deleteDatabase(){
-
-}
-
-
-
-
-bool Database::openDatabase(){
-
-}
-
-bool Database::closeDatabase(){
+bool Database::deleteDatabase(string databaseName){
 
 }
 
@@ -27,25 +19,42 @@ bool Database::closeDatabase(){
 
 
 
-bool Database::createTable(){
+bool Database::openDatabase(string databaseName){
 
 }
 
-bool Database::insertData(){
+bool Database::closeDatabase(string databaseName){
 
 }
 
-bool Database::updateData(){
+
+
+
+
+bool Database::createTable(string tableName, vector<string> colNames, vector<string> colValues){
 
 }
 
-bool Database::deleteData(){
+bool Database::insertData(string tableName, vector<string> colNames, vector<string> colValues){
 
 }
 
-bool Database::selectData(){
+bool Database::updateData(string tableName, vector<string> colNames, vector<string> colValues){
+
 
 }
+
+bool Database::deleteData(string tableName, vector<string> colNames, vector<string> colValues){
+
+}
+
+bool Database::selectData(string tableName, vector<string> colNames, vector<string> colValues){
+
+
+}
+
+
+
 
 
 Database::~Database(){

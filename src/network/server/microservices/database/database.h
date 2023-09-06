@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <sqlite3.h>
 
 /*
@@ -30,17 +31,17 @@ class Database{
         Database();
         ~Database();
 
-        bool createDatabase();
-        bool deleteDatabase();
+        bool createDatabase(string databaseName);
+        bool deleteDatabase(string databaseName);
 
-        bool openDatabase();
-        bool closeDatabase();
+        bool openDatabase(string databaseName);
+        bool closeDatabase(string databaseName);
 
-        bool createTable();
-        bool insertData();
-        bool updateData();
-        bool deleteData();
-        bool selectData();
+        bool createTable(string tableName, vector<string> colNames, vector<string> colValues);
+        bool insertData(string tableName, vector<string> colNames, vector<string> colValues); //????
+        bool updateData(string tableName, vector<string> colNames, vector<string> colValues);
+        bool deleteData(string tableName, vector<string> colNames, vector<string> colValues);
+        bool selectData(string tableName, vector<string> colNames, vector<string> colValues);
 
         //vector <string> getDatabasestructure(); // -> get the structure of the database (tables, columns, rows, etc.)
 

@@ -1,6 +1,6 @@
 # Raspberry Pi Communication Program
 
-This program allows multiple Raspberry Pis to communicate with each other.
+This program allows multiple Single-Board-Computer (raspberry pi preferred) to communicate with each other.
 
 The following functionalities are available:
 - Sending, writing, reading, and executing files.
