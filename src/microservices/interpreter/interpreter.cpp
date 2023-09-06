@@ -88,6 +88,7 @@ int Interpreter::InterpretData(){
         if(this->IPs[i].first == this->clientIP){
             cout << "Client is already connected! IP: " << this->clientIP << endl;
             connected = true;
+            IPIndex = i;
         }
     }
 
@@ -154,7 +155,7 @@ int Interpreter::InterpretData(){
     }
 
     //logout
-    else if(this->dataPacket[0] == '0' && this->dataPacket[1] == '0'  && this->dataPacket[2] == '1' && this->dataPacket[3] == '0' && connected){
+    else if(this->dataPacket[0] == '0' && this->dataPacket[1] == '0'  && this->dataPacket[2] == '1' && this->dataPacket[3] == '0' && connected && IPIndex > -1){
         if(this->logout()){
             cout << "Logout successful" << endl;
             cleanup();
@@ -170,8 +171,8 @@ int Interpreter::InterpretData(){
     }
 
     //get data
-    else if(this->dataPacket[0] == '0' && this->dataPacket[1] == '0' && this->dataPacket[2] == '2' && connected && (this->IPs[IPIndex].second[0] == 1 || this->IPs[IPIndex].second[2] == 1)){
-        cout << "asdasdasd " << endl;
+    else if(this->dataPacket[0] == '0' && this->dataPacket[1] == '0' && this->dataPacket[2] == '2' && connected && (this->IPs[IPIndex].second[0] == 1 || this->IPs[IPIndex].second[2] == 1) && IPIndex > -1){
+        
         if(this->dataPacket[3] == '1' && this->IPs[IPIndex].second[0] == 1){
             //interpret the commands -> GPIO
 
