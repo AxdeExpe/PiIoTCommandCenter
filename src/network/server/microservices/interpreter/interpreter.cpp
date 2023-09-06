@@ -211,7 +211,7 @@ int Interpreter::InterpretData(){
         }
         else if(this->dataPacket[3] == '3' && this->IPs[IPIndex].second[1] == 1){
             //interpret the sql query
-
+            
 
 
         }

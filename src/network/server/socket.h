@@ -5,8 +5,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <string.h>
-#include "../../microservices/interpreter/interpreter.cpp"
-#include "../../microservices/response/response.cpp"
+#include "./microservices/interpreter/interpreter.cpp"
+#include "./microservices/response/response.cpp"
 
 using namespace std;
 
