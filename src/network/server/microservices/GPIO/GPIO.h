@@ -2,6 +2,7 @@
 #include <string.h>
 #include <vector>
 #include <bitset>
+//#include <wiringPi.h>
 
 using namespace std;
 
@@ -14,7 +15,7 @@ struct PinInfo{
 };
 
 
-//Is an information about all pins of the server before after the initialization (static)
+//Is an information about all pins of the server before the initialization (static)
 struct standardPins{
     short pin;
     bitset<1> mode;
@@ -42,5 +43,5 @@ class GPIO{
         int value;
 
         vector<PinInfo> PINS; //1. IP, 2. Pin, 3. IN / OUT, 4. HIGH / LOW
-        vector<standardPins> standardPins; //1. Pin, 2. IN / OUT, 3. HIGH / LOW
+        vector<standardPins> standardPinsList; //1. Pin, 2. IN / OUT, 3. HIGH / LOW
 };

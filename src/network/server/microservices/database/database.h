@@ -1,5 +1,6 @@
 #include <iostream>
-#include <string>
+#include <string.h>
+#include <vector>
 #include <sqlite3.h>
 
 /*
@@ -23,8 +24,17 @@
         -> client can request the structure of the database (tables, columns, rows, etc.)
         -> client can send requests to the server but it is not possible to do a direct insertion, update, delete or select from the client side
 
+
+    Notice:
+        - create multiple database objects for multiple databases
+        
+    TODO:
+        - path + databasename -> create database / delte database / open database / close database etc.
+        --> in database.cpp
+
 */
 
+using namespace std;
 
 class Database{
     public:
@@ -47,7 +57,8 @@ class Database{
 
     private:
         sqlite3 *db;
-        char *zErrMsg = 0;
+        sqlite3_stmt *query;
+        char *zErrMsg;
         int rc;
         char *sql;
         const char* data = "Callback function called";
