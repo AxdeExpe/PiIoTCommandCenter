@@ -62,10 +62,10 @@ bool Database::openDatabase(string databaseName){
 bool Database::closeDatabase(string databaseName){
 
     if(this->db){
-        int code = sqlite3_close(this->db);
+        this->rc = sqlite3_close(this->db);
 
         if(code != SQLITE_OK){
-            cout << "Error: Unable to close the database " << databaseName << ", Errorcode: " << code << endl;
+            cout << "Error: Unable to close the database " << databaseName << ", Errorcode: " << this->rc << endl;
             cout << "Error: " << sqlite3_errmsg(this->db) << endl;
             return false;
         }
@@ -89,14 +89,15 @@ bool Database::executeStatement(string statement){
 
         if(this->rc != SQLITE_OK){
             cout << "Error: Unable to execute the statement " << statement << ", Errorcode: " << this->rc << endl;
-            cout << "Error: " << this->zErrMsg << endl;
+            cout << "Error: " <<  sqlite3_errmsg(this->db) << endl;
             return false;
         }
 
         return true;
     }
-
-    cout << "Error: Database error while executing the statement " << statement << ", Errorcode: " << sqlite3_errmsg(this->db) << endl;
+    else{
+        cout << "Database is not open!" << endl;    
+    }
 
     return false;
 }

@@ -53,7 +53,6 @@ class Database{
     private:
         sqlite3 *db;
         sqlite3_stmt *query;
-        char *zErrMsg;
         int rc;
         char *sql;
         const char* data = "Callback function called";
