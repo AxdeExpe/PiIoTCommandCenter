@@ -47,12 +47,7 @@ class Database{
         bool openDatabase(string databaseName);
         bool closeDatabase(string databaseName);
 
-        bool createTable(string tableName, vector<string> colNames, vector<string> colValues);
-        bool insertData(string tableName, vector<string> colNames, vector<string> colValues); //????
-        bool updateData(string tableName, vector<string> colNames, vector<string> colValues);
-        bool deleteData(string tableName, vector<string> colNames, vector<string> colValues);
-        bool selectData(string tableName, vector<string> colNames, vector<string> colValues);
-
+        bool executeStatement(string statement);
         //vector <string> getDatabasestructure(); // -> get the structure of the database (tables, columns, rows, etc.)
 
     private:

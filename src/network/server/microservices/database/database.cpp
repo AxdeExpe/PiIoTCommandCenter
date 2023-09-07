@@ -82,28 +82,24 @@ bool Database::closeDatabase(string databaseName){
 
 
 
-bool Database::createTable(string tableName, vector<string> colNames, vector<string> colValues){
+bool Database::executeStatement(string statement){
 
+    if(this->db){
+        this->rc = sqlite3_exec(this->db, statement.c_str(), NULL, NULL, &this->zErrMsg);
+
+        if(this->rc != SQLITE_OK){
+            cout << "Error: Unable to execute the statement " << statement << ", Errorcode: " << this->rc << endl;
+            cout << "Error: " << this->zErrMsg << endl;
+            return false;
+        }
+
+        return true;
+    }
+
+    cout << "Error: Database error while executing the statement " << statement << ", Errorcode: " << sqlite3_errmsg(this->db) << endl;
+
+    return false;
 }
-
-bool Database::insertData(string tableName, vector<string> colNames, vector<string> colValues){
-
-}
-
-bool Database::updateData(string tableName, vector<string> colNames, vector<string> colValues){
-
-
-}
-
-bool Database::deleteData(string tableName, vector<string> colNames, vector<string> colValues){
-
-}
-
-bool Database::selectData(string tableName, vector<string> colNames, vector<string> colValues){
-
-
-}
-
 
 
 
