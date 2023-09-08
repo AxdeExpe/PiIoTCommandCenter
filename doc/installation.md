@@ -16,3 +16,6 @@ sudo apt-get install wiringPi
 compiling:
 g++ -o main main.cpp -ljsoncpp
 g++ -o main main.cpp -ljsoncpp -lwiringPi
+g++ -o main main.cpp -ljsoncpp -lsqlite3
+
+g++ -o main main.cpp -ljsoncpp -lwiringPi -lsqlite3
