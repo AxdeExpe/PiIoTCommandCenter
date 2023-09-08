@@ -58,7 +58,7 @@ class Database{
         sqlite3_stmt *query;
         int rc;
         char *sql;
-        cahr *zErrMsg;
+        char *zErrMsg;
         const char* data = "Callback function called";
 
         static int callback(void *NotUsed, int argc, char **argv, char **azColName);
