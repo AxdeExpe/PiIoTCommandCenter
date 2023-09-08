@@ -2,6 +2,7 @@
 #include <string.h>
 #include <vector>
 #include <sqlite3.h>
+#include <dirent.h>
 
 /*
     Only the admin can use the database (Server-Raspi) 
@@ -51,10 +52,13 @@ class Database{
         //vector <string> getDatabasestructure(); // -> get the structure of the database (tables, columns, rows, etc.)
 
     private:
+        bool searchDB(string databaseName);
+
         sqlite3 *db;
         sqlite3_stmt *query;
         int rc;
         char *sql;
+        cahr *zErrMsg;
         const char* data = "Callback function called";
 
         static int callback(void *NotUsed, int argc, char **argv, char **azColName);
