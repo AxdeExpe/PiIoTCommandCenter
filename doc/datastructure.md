@@ -19,9 +19,7 @@ rights: are the rights of the worker
 
 --> 0 for no, 1 for yes
 
-If somethingthe worker shouldn't has rights of something just write "-"
-
 For example:
-"rights":"s--"
+"rights":"100"
 
 --> the worker is only authorized to send data
