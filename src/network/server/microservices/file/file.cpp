@@ -38,13 +38,70 @@ bool file::deleteFile(){
 
 
 
-bool file::executeFile(){
+bool file::executeFile(bool waitForChild){
+
+    //true -> child executes the file
+    //false -> child doesn't execute the file
+    //and nothing more -> The troubleshooting will come later or needs to be resolved by the programmer themselves
 
     if(!this->searchFile()){
         return false;
     }
 
+    //check if the file is executable
+    struct stat file_execl;
+    if(stat(this->filename.c_str(), &file_execl) == 0){
+        //check if the file is executable
+        if(!(file_execl.st_mode & S_IXUSR) && !(file_execl.st_mode & S_IXGRP) && !(file_execl.st_mode & S_IXOTH)){
+            cout << "Error: The file " << this->filename << " is not executable" << endl;
+            return false;
+        }
+    }
+    else{
+        cout << "Warning: Unable to get the file status of " << this->filename << endl;
+    }
+
+    
     //execute the file
+    //create childprocess for the file
+    pid_t child;
+    if((child = fork()) == 0){
+        //child process
+        execl(this->filename.c_str(), NULL);
+        cout << "Error: File " << this->filename << " could not be executed, PID: " << child << endl;
+        exit(0);
+    }
+    else if(child == -1){
+        //error
+        cout << "Error: Unable to create a child process for the file " << this->filename << endl;
+        return false;
+    }
+    else{
+        //parent process
+        if(waitForChild){
+            //wait for the child process to finish
+            int status;
+            if (waitpid(child, &status, 0) > 0) {
+             
+                if (WIFEXITED(status) && !WEXITSTATUS(status)){
+                    cout << "Program execution successful" << endl;
+                    return true;
+                }
+                else
+                    cout << "Warning: program didn't terminate normally!" << endl;
+                    return true;      
+                }
+            else {
+                // waitpid() failed
+                cout << "Warning: waiting for child process failed" << endl;
+                return true;
+            }
+        }
+        else{
+            //don't wait for the child process to finish
+            return true;
+        }
+    }
 }
 
 bool file::writeFile(string content, string mode){

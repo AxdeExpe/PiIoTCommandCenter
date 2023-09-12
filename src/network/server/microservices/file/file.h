@@ -3,6 +3,8 @@
 #include <dirent.h>
 #include <fstream>
 #include <cstdlib.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 using namespace std;
 
@@ -15,7 +17,7 @@ class file{
         bool createFile();
         bool deleteFile();
 
-        bool executeFile();
+        bool executeFile(bool waitForChild = false);
 
         //mode: r+,w,w+,a,a+
         bool writeFile(string content, string mode);
