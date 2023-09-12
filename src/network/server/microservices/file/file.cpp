@@ -49,8 +49,24 @@ bool file::executeFile(){
 
 bool file::writeFile(string content, string mode){
 
+    if(!this->searchFile()){
+        return false;
+    }
 
+    if(mode != "ate" || mode != "app" || mode != "trunc"){
+        cout << "Error: Invalid mode " << mode << endl;
+        return false;
+    }
 
+    ofstream file(this->filename.c_str(), mode);
+
+    file << content;
+
+    cout << "Successfully wrote to the file " << this->filename << endl;
+
+    file.close();
+
+    return true;
 }
 
 string file::readFile(){
