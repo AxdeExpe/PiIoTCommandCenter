@@ -107,7 +107,7 @@ int Interpreter::InterpretData(){
             }
         }
 
-        ifstream data("../../microservices/data.json", ifstream::binary);
+        ifstream data("./microservices/clients.json", ifstream::binary);
 
         if (!data.is_open()) {
             cout << "Error opening file" << endl;
@@ -191,6 +191,8 @@ int Interpreter::InterpretData(){
             File* file = new File(fileName);
             string ret = file->readFile();
 
+            delete file;
+            
             //send the file to the client
             cout << ret << endl;
 ;

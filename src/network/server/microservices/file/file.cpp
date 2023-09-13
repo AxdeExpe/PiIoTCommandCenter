@@ -153,24 +153,24 @@ string File::readFile(){
         ifstream file(this->filename, ifstream::binary | ios::ate);
     
 
-    if(!file.is_open()){
+        if(!file.is_open()){
             cout << "Error opening file " << this->filename << endl;
 
             return NULL;
-    }
+        }
 
-    streampos fileSize = file.tellg();
-    char* buffer = new char[fileSize];
+        streampos fileSize = file.tellg();
+        char* buffer = new char[fileSize];
 
-    file.seekg(0, ios::beg); // Go back to the beginning of the file
-    file.read(buffer, fileSize);
-    
-    file.close();
+        file.seekg(0, ios::beg); // Go back to the beginning of the file
+        file.read(buffer, fileSize);
 
-    string bufferString(buffer);
-    delete[] buffer;
+        file.close();
 
-    return bufferString;
+        string bufferString(buffer);
+        delete[] buffer;
+
+        return bufferString;
     }
 }
 
