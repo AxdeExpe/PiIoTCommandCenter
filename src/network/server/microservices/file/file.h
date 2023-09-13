@@ -2,17 +2,18 @@
 #include <iostream>
 #include <dirent.h>
 #include <fstream>
-#include <cstdlib.h>
+#include <cstdlib>
+#include <sys/wait.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
 using namespace std;
 
-class file{
+class File{
 
     public:
 
-        file(string filename);
+        File(string filename);
 
         bool createFile();
         bool deleteFile();
@@ -23,7 +24,7 @@ class file{
         bool writeFile(string content, string mode);
         string readFile();
 
-        ~file();
+        ~File();
 
     private:
         //it's nearly the same funrion like in database.cpp

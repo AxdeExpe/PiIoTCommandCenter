@@ -1,13 +1,13 @@
 #include "file.h"
 
-file::file(string filename){
+File::File(string filename){
     this->filename = filename;
 }
 
 
 
 
-bool file::createFile(){
+bool File::createFile(){
 
     ofstream file(this->filename.c_str());
 
@@ -21,7 +21,7 @@ bool file::createFile(){
     return true;
 }
 
-bool file::deleteFile(){
+bool File::deleteFile(){
 
     if(!this->searchFile()){
         return false;
@@ -38,7 +38,7 @@ bool file::deleteFile(){
 
 
 
-bool file::executeFile(bool waitForChild){
+bool File::executeFile(bool waitForChild){
 
     //true -> child executes the file
     //false -> child doesn't execute the file
@@ -104,43 +104,59 @@ bool file::executeFile(bool waitForChild){
     }
 }
 
-bool file::writeFile(string content, string mode){
+bool File::writeFile(string content, string mode){
 
-    if(!this->searchFile()){
-        return false;
-    }
+        if (!this->searchFile()) {
+            return false;
+        }
 
-    if(mode != "ate" || mode != "app" || mode != "trunc"){
-        cout << "Error: Invalid mode " << mode << endl;
-        return false;
-    }
+        if (mode != "ate" && mode != "app" && mode != "trunc") {
+            std::cout << "Error: Invalid mode " << mode << std::endl;
+            return false;
+        }
 
-    ofstream file(this->filename.c_str(), mode);
+        std::ofstream file;
 
-    file << content;
+        if(mode == "ate"){
+            file.open(this->filename.c_str(), ios_base::ate);
+        }
 
-    cout << "Successfully wrote to the file " << this->filename << endl;
+        else if(mode == "app"){
+            file.open(this->filename.c_str(), ios_base::app);
+        }
 
-    file.close();
+        else if(mode == "trunc"){
+            file.open(this->filename.c_str(), ios_base::trunc);
+        }
 
-    return true;
+        if (!file.is_open()) {
+            std::cout << "Error: Unable to open file " << this->filename << std::endl;
+            return false;
+        }
+
+        file << content;
+
+        std::cout << "Successfully wrote to the file " << this->filename << std::endl;
+
+        file.close();
+
+        return true;
 }
 
-string file::readFile(){
+string File::readFile(){
 
     if(!this->searchFile()){
-        return false;
+        return NULL;
     }
 
     else{
         ifstream file(this->filename, ifstream::binary | ios::ate);
-    }
+    
 
     if(!file.is_open()){
             cout << "Error opening file " << this->filename << endl;
-            cleanup();
 
-            return -2;
+            return NULL;
     }
 
     streampos fileSize = file.tellg();
@@ -154,13 +170,14 @@ string file::readFile(){
     string bufferString(buffer);
     delete[] buffer;
 
-    return buferString;
+    return bufferString;
+    }
 }
 
 
 
 
-bool file::searchFile(){
+bool File::searchFile(){
 
     //searches the file in the path
 
@@ -195,6 +212,6 @@ bool file::searchFile(){
 
 
 
-file::~file(){
+File::~File(){
 
 }

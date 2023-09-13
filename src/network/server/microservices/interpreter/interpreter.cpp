@@ -1,6 +1,7 @@
 #include "interpreter.h"
 #include "../GPIO/GPIO.cpp"
 #include "../database/database.cpp"
+#include "../file/file.cpp"
 
 Interpreter::Interpreter(){
 
@@ -187,27 +188,12 @@ int Interpreter::InterpretData(){
             string fileName = dataPacket.substr(4, dataPacket.size() - 4); //get the path of the file
             cout << fileName << endl;
 
-            ifstream file(fileName, ifstream::binary | ios::ate);
-
-            if(!file.is_open()){
-                cout << "Error opening file" << endl;
-                cleanup();
-
-                return -2;
-            }
-
-            streampos fileSize = file.tellg();
-            char* buffer = new char[fileSize];
-
-            file.seekg(0, ios::beg); // Go back to the beginning of the file
-            file.read(buffer, fileSize);
-    
-            file.close();
+            File* file = new File(fileName);
+            string ret = file->readFile();
 
             //send the file to the client
-            cout << buffer << endl;
-
-            delete[] buffer;
+            cout << ret << endl;
+;
             return 1;
         }
         else if(this->dataPacket[3] == '3' && this->IPs[IPIndex].second[1] == 1){
