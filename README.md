@@ -11,13 +11,13 @@ The following functionalities are available:
 
 ## Code
 
-The code is stored at /src
-- There is the server and the client side
-  
-🠖 At the Client side therre you can interact with the API
+The project's codebase is located in the `/src` directory, which comprises both server-side and client-side components.
 
-🠖 The server side is the actual API
+- **Client Side**: In the `/src/client` directory, you can interact with the API, making requests and utilizing its features.
+
+- **Server Side**: The server-side code, constituting the actual API, resides in the `/src/server` directory.
 
 ## Documentation
 
-The documentation is stored at the /doc
+The project's documentation can be found in the `/doc` directory, providing comprehensive information and guidance.
+
