@@ -13,10 +13,10 @@ The following functionalities are available:
 
 The code is stored at /src
 - There is the server and the client side
-- 
--> At the Client side therre you can interact with the API
+  
+🠖 At the Client side therre you can interact with the API
 
--> The server side is the actual API
+🠖 The server side is the actual API
 
 ## Documentation
 
