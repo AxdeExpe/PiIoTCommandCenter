@@ -13,9 +13,9 @@ The following functionalities are available:
 
 The project's codebase is located in the `/src` directory, which comprises both server-side and client-side components.
 
-- **Client Side**: In the `/src/client` directory, you can interact with the API, making requests and utilizing its features.
+- **Client Side**: In the `/src/network/client` directory, you can interact with the API, making requests and utilizing its features.
 
-- **Server Side**: The server-side code, constituting the actual API, resides in the `/src/server` directory.
+- **Server Side**: The server-side code, constituting the actual API, resides in the `/src/network/server` directory.
 
 ## Documentation
 
