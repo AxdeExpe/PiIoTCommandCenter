@@ -96,16 +96,6 @@ int Interpreter::InterpretData(){
 
     //login
     if(this->dataPacket[0] == '0' && this->dataPacket[1] == '0'  && this->dataPacket[2] == '0' && this->dataPacket[3] == '0' && !connected){
-        //check if the client is already connected
-        for(int i = 0; i < IPs.size(); i++){
-            cout << this->IPs[i].first << endl;
-            if(this->IPs[i].first == this->clientIP){
-                cout << "Client is already connected! IP: " << this->clientIP << endl;
-                cleanup();
-
-                return -3;
-            }
-        }
 
         ifstream data("./microservices/clients.json", ifstream::binary);
 
@@ -131,7 +121,7 @@ int Interpreter::InterpretData(){
             j++;
         }
 
-        //check if the ip and password does match<<
+        //check if the ip and password does match
         for(int i = 0; i < root["worker"].size(); i++){
             if(strcmp(this->clientIP, root["worker"][i]["ip"].asCString()) == 0){
                 if(strcmp(buffer, root["worker"][i]["pwd"].asCString()) == 0){
