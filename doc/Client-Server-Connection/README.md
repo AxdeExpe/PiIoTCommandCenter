@@ -16,6 +16,13 @@
 
 ### Data Packet Structure
 
+#### Available Datapackets
+
+**LOGIN = "0000" + password**
+**LOGOUT = "0010"**
+**GETDATA = "0022" + path to file**
+
+
 - **Byte 1:** `0x00` = Request, `0x01` = Response
 - **Byte 2:** `0x00` = None, (`0x01` = Success, `0x02` = Failure) -> response from the previous data packet
 - **Byte 3:** `0x00` = Login, `0x01` = Logout, `0x02` = Get Data, `0x03` = Set Data
