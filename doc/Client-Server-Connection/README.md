@@ -18,9 +18,9 @@
 
 #### Available Datapackets
 
-**LOGIN = "0000" + password**
-**LOGOUT = "0010"**
-**GETDATA = "0022" + path to file**
+- **LOGIN = "0000" + password**
+- **LOGOUT = "0010"**
+- **GETDATA = "0022" + path to file**
 
 
 - **Byte 1:** `0x00` = Request, `0x01` = Response
