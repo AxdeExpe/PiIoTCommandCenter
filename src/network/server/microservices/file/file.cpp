@@ -146,7 +146,7 @@ bool File::writeFile(string content, string mode){
 string File::readFile(){
 
     if(!this->searchFile()){
-        return NULL;
+        return ""; //NULL
     }
 
     else{
@@ -156,7 +156,7 @@ string File::readFile(){
         if(!file.is_open()){
             cout << "Error opening file " << this->filename << endl;
 
-            return NULL;
+            return ""; //NULL
         }
 
         streampos fileSize = file.tellg();

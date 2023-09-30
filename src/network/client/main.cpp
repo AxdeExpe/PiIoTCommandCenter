@@ -50,7 +50,7 @@ int main(){
 
 */
 
-/*
+
     Socket *s = new Socket(PORT, "127.0.0.1");
 
     if(!s->createSocket()){
@@ -66,6 +66,6 @@ int main(){
     cout << "Socket deleted" << endl;
 
     return 0;
-    */
+
 
 }

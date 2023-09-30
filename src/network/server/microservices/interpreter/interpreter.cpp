@@ -185,7 +185,8 @@ int Interpreter::InterpretData(){
             
             //send the file to the client
             cout << ret << endl;
-;
+            cleanup();
+
             return 1;
         }
         else if(this->dataPacket[3] == '3' && this->IPs[IPIndex].second[1] == 1){
