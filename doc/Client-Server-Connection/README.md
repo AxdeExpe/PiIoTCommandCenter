@@ -13,15 +13,14 @@
 
 ![Architecture-Request-Response](Architecture-Request-Response.png)
 
-
-### Data Packet Structure
-
-#### Available Datapackets
+### API Datapackets
 
 - **LOGIN = "0000" + password**
 - **LOGOUT = "0010"**
 - **GETDATA = "0022" + path to file**
 
+
+### Data Packet Structure
 
 - **Byte 1:** `0x00` = Request, `0x01` = Response
 - **Byte 2:** `0x00` = None, (`0x01` = Success, `0x02` = Failure) -> response from the previous data packet
