@@ -41,25 +41,21 @@ bool Socket::sendData(){
     cout << this->DataPaketSend << endl;
 
 
-        int sentBytes = send(client_fd, this->DataPaketSend.c_str(), this->DataPaketSend.size(), 0);
-        if (sentBytes == -1) {
-            cout << "Error sending data" << endl;
+    int sentBytes = send(client_fd, this->DataPaketSend.c_str(), this->DataPaketSend.size(), 0);
+    if (sentBytes == -1) {
+        cout << "Error sending data" << endl;
 
-            this->DataPaketSend = nullptr;
-            close(client_fd);
-            return false;
-        }
-        cout << "Data sent" << endl;
         close(client_fd);
-        return true;
-    
+        return false;
+    }
+    cout << "Data sent" << endl;
     close(client_fd);
-    return false; // No data to send
+    return true;
 }
 
 void Socket::receive(){
-    char buffer[1024] = {0};
-    valread = read(client_fd, buffer, 1024);
+    char buffer[1024];
+    valread = read(client_fd, buffer, sizeof(buffer));
     cout << buffer << endl;
 }
 

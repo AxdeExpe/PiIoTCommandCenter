@@ -83,7 +83,7 @@ int Interpreter::InterpretData(){
     //check if the client is not already connected
     for(int i = 0; i < IPs.size(); i++){
         cout << this->IPs[i].first << endl;
-        if(this->IPs[i].first != this->clientIP && i == IPs.size() - 1){
+        if(this->IPs[i].first != this->clientIP){
             cout << "Client is not already connected! IP: " << this->clientIP << endl;
             connected = false;
         }
