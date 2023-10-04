@@ -59,8 +59,9 @@ void Interpreter::setData(char* dataPacket, char* clientIP){
 
 /*
     ret val:
-     1: File sent
-     0: login successful
+    2: sql statement sucessfull executed
+    1: File sent
+    0: login successful
     -1: unable to interpret the data packet
     -2: unable to open the file
     -3: client is already connected
@@ -68,6 +69,7 @@ void Interpreter::setData(char* dataPacket, char* clientIP){
     -5: logout failed
     -6: client is not logged in
     -7: no rights for the command
+    -8: sql statement not executed
 */
 
 int Interpreter::InterpretData(){
@@ -190,8 +192,20 @@ int Interpreter::InterpretData(){
             return 1;
         }
         else if(this->dataPacket[3] == '3' && this->IPs[IPIndex].second[1] == 1){
-            //interpret the sql query
             
+            //get the sql statement
+            char statement[strlen(this->dataPacket) - 4]
+
+            for(int i = 4; i < strlen(this->dataPacket); i++){
+                statement[i] = this->dataPacket[i];
+            }
+
+            cout << statement << endl;
+
+            string stat = statement;
+            
+            //send sql statement to database microservice
+            Database *db = new Database(stat);
 
 
         }

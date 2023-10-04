@@ -1,12 +1,14 @@
 #include "database.h"
 #define PATH "../database/"
 
-Database::Database(){
+Database::Database(string statement){
     this->db = NULL;
     this->query = NULL;
     this->zErrMsg = NULL;
     this->rc = 0;
     this->sql = NULL;
+
+    this->executeStatement(statement);
 }
 
 

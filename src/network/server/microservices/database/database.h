@@ -39,8 +39,11 @@ using namespace std;
 
 class Database{
     public:
-        Database();
+        Database(string statement);
         ~Database();
+
+    private:
+        bool searchDB(string databaseName);
 
         bool createDatabase(string databaseName);
         bool deleteDatabase(string databaseName);
@@ -50,9 +53,6 @@ class Database{
 
         bool executeStatement(string statement);
         //vector <string> getDatabasestructure(); // -> get the structure of the database (tables, columns, rows, etc.)
-
-    private:
-        bool searchDB(string databaseName);
 
         sqlite3 *db;
         sqlite3_stmt *query;
