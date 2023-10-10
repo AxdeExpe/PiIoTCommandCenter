@@ -3,6 +3,8 @@
 #include "../database/database.cpp"
 #include "../file/file.cpp"
 
+
+
 Interpreter::Interpreter(){
 
 }
@@ -13,6 +15,8 @@ void Interpreter::setData(char* dataPacket, char* clientIP){
 
     this->clientIP = new char[strlen(clientIP) + 1];
     strcpy(this->clientIP, clientIP);
+
+    this->db = new Database();
 }
 
 /*
@@ -70,6 +74,7 @@ void Interpreter::setData(char* dataPacket, char* clientIP){
     -6: client is not logged in
     -7: no rights for the command
     -8: sql statement not executed
+    -9: database not found
 */
 
 int Interpreter::InterpretData(){
@@ -193,21 +198,44 @@ int Interpreter::InterpretData(){
         }
         else if(this->dataPacket[3] == '3' && this->IPs[IPIndex].second[1] == 1){
             
-            //get the sql statement
-            char statement[strlen(this->dataPacket) - 4]
+            //get database name
+            //needs a wildcard for context intervals
+            //0023 + "/" + DB-name + "/" + statement
+            //get the position of the second "/" char and calculate the length of the databasename 
+            short length;
 
-            for(int i = 4; i < strlen(this->dataPacket); i++){
-                statement[i] = this->dataPacket[i];
+            for(int i = 5; i < strlen(this->dataPacket); i++){
+                if(this->dataPacket[i] == '/'){
+                    length = i - 5;
+                    break;
+                }
+            }
+            
+            string dP = this->dataPacket;
+
+            string database = dP.substr(5, length);
+
+            //open database+
+            if(!this->db->searchDB(database)){
+                return -9;
             }
 
-            cout << statement << endl;
+            this->db->openDatabase(database);
 
-            string stat = statement;
+
+            //get the sql statement
+            string statement = dP.substr(length+2, strlen(dP));
             
             //send sql statement to database microservice
-            Database *db = new Database(stat);
+            bool ret = this->db->executeStatement(statement);
 
+            this->db->closeDatabase(database);
 
+            if(!ret){
+                return -8;
+            }
+
+            return 2;
         }
         return -7;
     }
@@ -247,6 +275,11 @@ bool Interpreter::logout(){
 }
 
 void Interpreter::cleanup(){
+
+    if(this->db){
+        delete this->db;
+        this->db = nullptr;
+    }
 
     if(this->dataPacket){
         delete[] this->dataPacket;

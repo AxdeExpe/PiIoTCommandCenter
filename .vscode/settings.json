@@ -65,6 +65,7 @@
         "csignal": "cpp",
         "map": "cpp",
         "sstream": "cpp",
-        "bitset": "cpp"
+        "bitset": "cpp",
+        "xstring": "cpp"
     }
 }

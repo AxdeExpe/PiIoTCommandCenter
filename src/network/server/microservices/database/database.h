@@ -44,6 +44,7 @@ class Database{
 
     private:
         bool searchDB(string databaseName);
+        vector <string> getAllDatabases();
 
         bool createDatabase(string databaseName);
         bool deleteDatabase(string databaseName);

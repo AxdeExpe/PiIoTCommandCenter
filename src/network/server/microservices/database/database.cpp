@@ -1,14 +1,12 @@
 #include "database.h"
 #define PATH "../database/"
 
-Database::Database(string statement){
+Database::Database(){
     this->db = NULL;
     this->query = NULL;
     this->zErrMsg = NULL;
     this->rc = 0;
     this->sql = NULL;
-
-    this->executeStatement(statement);
 }
 
 
@@ -151,6 +149,14 @@ bool Database::searchDB(string databaseName){
     cout << "Error: Unable to find the database " << databaseName << endl;
 
     return false;
+}
+
+vector <string> Database::getAllDatabases(){
+
+    vector <string> databases;
+
+    //get all databases from the database directory
+
 }
 
 

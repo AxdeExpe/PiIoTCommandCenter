@@ -32,4 +32,6 @@ class Interpreter{
 
         vector<pair<string, bitset<3>>> IPs; //IP's and their rights (0 = send data, 1 = access to gpio, 2 = access to file system)
         
+        Database *db;
+
 };
